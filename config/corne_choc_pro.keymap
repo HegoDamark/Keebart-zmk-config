@@ -124,7 +124,7 @@
             //                    | GUI | LWR | SPC |               | ENT | RSE  | ALT |
 
             bindings = <
-&auto_shift TILDE TILDE  &kp Q       &kp W           &mt LEFT_BRACKET E  &kp R             &kp T      &td_f4_f5  &none  &kp Y        &mt POUND U               &mt EQUAL I              &mt SEMI O           &kp LS(NUMBER_2)         &mt RA(APOS) RA(SEMICOLON)
+&auto_shift GRAVE GRAVE  &kp Q       &kp W           &mt LEFT_BRACKET E  &kp R             &kp T      &td_f4_f5  &none  &kp Y        &mt BACKSLASH U           &mt EQUAL I              &mt SEMI O           &kp LS(NUMBER_2)         &mt RA(APOS) RA(SEMICOLON)
 &kp DEL                  &mt APOS A  &mt LEFT_ALT S  &mt LEFT_CONTROL D  &mt LEFT_SHIFT F  &kp G      &td_f2_f3  &none  &kp H        &kp J                     &kp K                    &mt RALT L           &kp P                    &auto_shift RIGHT_BRACKET RIGHT_BRACKET
 &lt 5 NON_US_BACKSLASH   &kp Z       &kp X           &kp C               &kp V             &kp B                        &kp N        &kp M                     &auto_shift COMMA COMMA  &auto_shift DOT DOT  &auto_shift MINUS MINUS  &lt 5 SLASH
                                                      &lt 4 ESC           &lt 1 SPACE       &lt 3 TAB                    &lt 2 ENTER  &mt LEFT_SHIFT BACKSPACE  &kp LWIN
@@ -142,8 +142,8 @@
 
             bindings = <
 &none   &kp C_PREV    &kp C_STOP    &kp C_PP          &kp C_NEXT      &kp C_VOLUME_UP    &kp C_BRI_UP  &none  &kp LS(LA(LC(LEFT_BRACKET)))  &auto_shift N7 N7  &auto_shift N8 N8    &auto_shift N9 N9  &kp LS(LA(LC(RIGHT_BRACKET)))  &mt RA(APOS) RA(SEMICOLON)
-&trans  &kp LEFT_GUI  &kp LEFT_ALT  &kp LEFT_CONTROL  &kp LEFT_SHIFT  &kp C_VOLUME_DOWN  &kp C_BRI_DN  &none  &kp RA(LEFT_BRACKET)          &auto_shift N4 N4  &auto_shift N5 N5    &auto_shift N6 N6  &kp RA(RIGHT_BRACKET)          &kp RIGHT_BRACKET
-&none   &kp K_UNDO    &kp K_CUT     &kp K_COPY        &kp K_PASTE     &kp K_MUTE                              &kp DOWN                      &auto_shift N1 N1  &auto_shift N2 N2    &auto_shift N3 N3  &kp RA(E)                      &kp SLASH
+&trans  &kp LEFT_GUI  &kp LEFT_ALT  &kp LEFT_CONTROL  &kp LEFT_SHIFT  &kp C_VOLUME_DOWN  &kp C_BRI_DN  &none  &kp RA(LEFT_BRACKET)          &auto_shift N4 N4  &auto_shift N5 N5    &auto_shift N6 N6  &kp RA(RIGHT_BRACKET)          &auto_shift RIGHT_BRACKET RIGHT_BRACKET
+&none   &kp LC(Z)     &kp LC(X)     &kp LC(C)         &kp LC(V)       &kp C_MUTE                              &kp DOWN                      &auto_shift N1 N1  &auto_shift N2 N2    &auto_shift N3 N3  &kp RA(E)                      &auto_shift SLASH SLASH
                                     &none             &trans          &none                                   &auto_shift COMMA COMMA       &auto_shift N0 N0  &auto_shift DOT DOT
             >;
         };
@@ -160,7 +160,7 @@
             bindings = <
 &none   &kp C_PREV    &kp C_STOP    &kp C_PP          &kp C_NEXT      &kp C_VOLUME_UP    &kp C_BRI_UP  &none  &kp PAGE_UP    &kp LC(PAGE_UP)  &kp UP_ARROW    &kp LC(PAGE_DOWN)  &none  &kp HOME
 &trans  &kp LEFT_WIN  &kp LEFT_ALT  &kp LEFT_CONTROL  &kp LEFT_SHIFT  &kp C_VOLUME_DOWN  &kp C_BRI_DN  &none  &kp PAGE_DOWN  &kp LEFT_ARROW   &kp DOWN_ARROW  &kp RIGHT_ARROW    &none  &none
-&none   &kp K_UNDO    &kp K_CUT     &kp K_COPY        &kp K_PASTE     &kp K_MUTE                              &none          &kp LA(TAB)      &kp RA(TAB)     &none              &none  &kp END
+&none   &kp LC(Z)     &kp LC(X)     &kp LC(C)         &kp LC(V)       &kp C_MUTE                              &none          &kp LA(TAB)      &kp RA(TAB)     &none              &none  &kp END
                                     &kp ESC           &kp SPACE       &kp TAB                                 &trans         &none            &none
             >;
         };
@@ -170,7 +170,7 @@
             bindings = <
 &none   &kp C_PREV    &kp C_STOP    &kp C_PP          &kp C_NEXT      &kp C_VOLUME_UP    &kp C_BRI_UP  &none  &msc SCRL_UP    &msc SCRL_LEFT  &mmv MOVE_UP    &msc SCRL_RIGHT  &none  &kp HOME
 &trans  &kp LEFT_WIN  &kp LEFT_ALT  &kp LEFT_CONTROL  &kp LEFT_SHIFT  &kp C_VOLUME_DOWN  &kp C_BRI_DN  &none  &msc SCRL_DOWN  &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_RIGHT  &none  &none
-&none   &kp K_UNDO    &kp K_CUT     &kp K_COPY        &kp K_PASTE     &kp K_MUTE                              &none           &kp LA(TAB)     &kp RA(TAB)     &none            &none  &kp END
+&none   &kp LC(Z)     &kp LC(X)     &kp LC(C)         &kp LC(V)       &kp C_MUTE                              &none           &kp LA(TAB)     &kp RA(TAB)     &none            &none  &kp END
                                     &none             &none           &trans                                  &mkp MB1        &mkp MB2        &mkp MB3
             >;
         };
@@ -180,7 +180,7 @@
             bindings = <
 &none   &kp C_PREV    &kp C_STOP    &kp C_PP          &kp C_NEXT      &kp C_VOLUME_UP    &kp C_BRI_UP  &none  &none      &kp F7         &kp F8        &kp F9  &kp F10  &none
 &trans  &kp LEFT_WIN  &kp LEFT_ALT  &kp LEFT_CONTROL  &kp LEFT_SHIFT  &kp C_VOLUME_DOWN  &kp C_BRI_DN  &none  &none      &kp F4         &kp F5        &kp F6  &kp F11  &none
-&none   &kp K_UNDO    &kp K_CUT     &kp K_COPY        &kp K_PASTE     &kp K_MUTE                              &none      &kp F1         &kp F2        &kp F3  &kp F12  &none
+&none   &kp LC(Z)     &kp LC(X)     &kp LC(C)         &kp LC(V)       &kp C_MUTE                              &none      &kp F1         &kp F2        &kp F3  &kp F12  &none
                                     &trans            &none           &none                                   &kp ENTER  &kp BACKSPACE  &kp LEFT_WIN
             >;
         };
