@@ -149,9 +149,8 @@ static void draw_middle(lv_obj_t *widget, lv_color_t cbuf[], const struct status
     rotate_canvas(canvas, cbuf);
 }
 
-/* Final 68 px block. The canvas is shifted so that ~32 source pixels are now
- * visible on the Corne. This gives the Bluetooth row and the active layer their
- * own breathing room. The layer uses the already-enabled Montserrat 14 font. */
+/* Final 68 px block. Keep both rows compact and evenly spaced. The layer uses
+ * the same 8 px pixel font as the rest of the compact status text. */
 static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status_state *state) {
     lv_obj_t *canvas = lv_obj_get_child(widget, 2);
 
@@ -166,12 +165,12 @@ static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status
     lv_draw_label_dsc_t small_center_inv;
     init_label_dsc(&small_center_inv, LVGL_BACKGROUND, &lv_font_unscii_8, LV_TEXT_ALIGN_CENTER);
     lv_draw_label_dsc_t layer_dsc;
-    init_label_dsc(&layer_dsc, LVGL_FOREGROUND, &lv_font_montserrat_14, LV_TEXT_ALIGN_CENTER);
+    init_label_dsc(&layer_dsc, LVGL_FOREGROUND, &lv_font_unscii_8, LV_TEXT_ALIGN_CENTER);
 
     lv_canvas_draw_rect(canvas, 0, 0, CANVAS_SIZE, CANVAS_SIZE, &bg_dsc);
 
     /* Bluetooth profiles: upper physical row. */
-    lv_canvas_draw_text(canvas, 1, 1, 18, &small_left, "BT");
+    lv_canvas_draw_text(canvas, 1, 2, 18, &small_left, "BT");
 
     const int profile_x[5] = {22, 31, 40, 49, 58};
     for (int i = 0; i < 5; i++) {
@@ -179,9 +178,9 @@ static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status
         char profile[2] = {};
         snprintf(profile, sizeof(profile), "%d", i + 1);
         if (selected) {
-            lv_canvas_draw_rect(canvas, profile_x[i], 0, 9, 10, &fg_dsc);
+            lv_canvas_draw_rect(canvas, profile_x[i], 0, 9, 11, &fg_dsc);
         }
-        lv_canvas_draw_text(canvas, profile_x[i], 1, 9,
+        lv_canvas_draw_text(canvas, profile_x[i], 2, 9,
                             selected ? &small_center_inv : &small_center, profile);
     }
 
@@ -189,9 +188,9 @@ static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status
     if (state->layer_label == NULL || strlen(state->layer_label) == 0) {
         char text[12] = {};
         snprintf(text, sizeof(text), "LAYER %u", state->layer_index);
-        lv_canvas_draw_text(canvas, 0, 14, 68, &layer_dsc, text);
+        lv_canvas_draw_text(canvas, 0, 16, 68, &layer_dsc, text);
     } else {
-        lv_canvas_draw_text(canvas, 0, 14, 68, &layer_dsc, state->layer_label);
+        lv_canvas_draw_text(canvas, 0, 16, 68, &layer_dsc, state->layer_label);
     }
 
     rotate_canvas(canvas, cbuf);
@@ -367,11 +366,12 @@ int top_pos = 0;
 int middle_pos = 68;
 int bottom_pos = 136;
 #else
-/* Give 8 more physical pixels to the bottom block. The battery block is
- * compacted accordingly; the middle block keeps its full 68 px width. */
-int top_pos = 100;
-int middle_pos = 32;
-int bottom_pos = -36;
+/* Balanced physical allocation: 66 px batteries, 68 px middle, 26 px bottom.
+ * This keeps the battery block fully visible while giving BT/layer two extra
+ * pixels compared with V6. */
+int top_pos = 94;
+int middle_pos = 26;
+int bottom_pos = -42;
 #endif
 
 int zmk_widget_status_init(struct zmk_widget_status *widget, lv_obj_t *parent) {
