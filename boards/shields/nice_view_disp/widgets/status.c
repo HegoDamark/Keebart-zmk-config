@@ -137,7 +137,7 @@ static void draw_middle(lv_obj_t *widget, lv_color_t cbuf[], const struct status
     }
 
     /* Connection icon occupies the left half and is vertically centred. */
-    lv_canvas_draw_text(canvas, 3, 10, 22, &icon_dsc, output_text);
+    lv_canvas_draw_text(canvas, 3, 3, 22, &icon_dsc, output_text);
 
     /* CAPS shares the upper row with the connection icon; it is short enough
      * for the restricted right-hand area. */
