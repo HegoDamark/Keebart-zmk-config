@@ -139,14 +139,17 @@ static void draw_middle(lv_obj_t *widget, lv_color_t cbuf[], const struct status
     /* Connection icon occupies the left half and is vertically centred. */
     lv_canvas_draw_text(canvas, 3, 10, 22, &icon_dsc, output_text);
 
-    /* W/M and value are rendered as one string so a three-digit value stays together. */
-    char wpm_text[10] = {};
-    snprintf(wpm_text, sizeof(wpm_text), "W/M %u", state->wpm);
-    lv_canvas_draw_text(canvas, 27, 3, 40, &small_left, wpm_text);
-
+    /* CAPS shares the upper row with the connection icon; it is short enough
+     * for the restricted right-hand area. */
     if (state->caps_lock) {
-        lv_canvas_draw_text(canvas, 34, 24, 33, &small_right, "CAPS");
+        lv_canvas_draw_text(canvas, 34, 3, 33, &small_right, "CAPS");
     }
+
+    /* Give WPM its own lower row and nearly the full canvas width so values up
+     * to three digits stay together as a single string (e.g. "WPM 123"). */
+    char wpm_text[10] = {};
+    snprintf(wpm_text, sizeof(wpm_text), "WPM %u", state->wpm);
+    lv_canvas_draw_text(canvas, 3, 24, 64, &small_right, wpm_text);
 
     /* This separator is the visual boundary with the enlarged BT/layer block. */
     draw_separator(canvas, 40);
