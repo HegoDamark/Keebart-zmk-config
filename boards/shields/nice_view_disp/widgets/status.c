@@ -149,7 +149,11 @@ static void draw_middle(lv_obj_t *widget, lv_color_t cbuf[], const struct status
     rotate_canvas(canvas, cbuf);
 }
 
-/* Final 68 px block: compact Bluetooth profile row and active layer. */
+/* Final 68 px block. On this rotated nice!view only the first ~24 source
+ * pixels of this canvas are visible, so Bluetooth profiles and layer must both
+ * live in that compact strip. After rotation, larger source-Y values appear
+ * above smaller source-Y values: profiles are therefore drawn at y=14 and the
+ * active layer at y=2 so the physical display reads BT row, then layer. */
 static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status_state *state) {
     lv_obj_t *canvas = lv_obj_get_child(widget, 2);
 
@@ -164,33 +168,32 @@ static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status
     lv_draw_label_dsc_t small_center_inv;
     init_label_dsc(&small_center_inv, LVGL_BACKGROUND, &lv_font_unscii_8, LV_TEXT_ALIGN_CENTER);
     lv_draw_label_dsc_t layer_dsc;
-    init_label_dsc(&layer_dsc, LVGL_FOREGROUND, &lv_font_montserrat_14, LV_TEXT_ALIGN_CENTER);
+    init_label_dsc(&layer_dsc, LVGL_FOREGROUND, &lv_font_unscii_8, LV_TEXT_ALIGN_CENTER);
 
     lv_canvas_draw_rect(canvas, 0, 0, CANVAS_SIZE, CANVAS_SIZE, &bg_dsc);
 
-    lv_canvas_draw_text(canvas, 1, 6, 18, &small_left, "BT");
+    /* The active layer is the lower physical row after the 90 degree rotation. */
+    if (state->layer_label == NULL || strlen(state->layer_label) == 0) {
+        char text[12] = {};
+        snprintf(text, sizeof(text), "LAYER %u", state->layer_index);
+        lv_canvas_draw_text(canvas, 0, 2, 68, &layer_dsc, text);
+    } else {
+        lv_canvas_draw_text(canvas, 0, 2, 68, &layer_dsc, state->layer_label);
+    }
 
-    /* Five profiles on one line. The selected profile is inverted. */
+    /* Bluetooth profiles occupy the row immediately above the layer. */
+    lv_canvas_draw_text(canvas, 1, 14, 18, &small_left, "BT");
+
     const int profile_x[5] = {22, 31, 40, 49, 58};
     for (int i = 0; i < 5; i++) {
         bool selected = i == state->active_profile_index;
         char profile[2] = {};
         snprintf(profile, sizeof(profile), "%d", i + 1);
         if (selected) {
-            lv_canvas_draw_rect(canvas, profile_x[i], 3, 9, 13, &fg_dsc);
+            lv_canvas_draw_rect(canvas, profile_x[i], 11, 9, 12, &fg_dsc);
         }
-        lv_canvas_draw_text(canvas, profile_x[i], 6, 9,
+        lv_canvas_draw_text(canvas, profile_x[i], 14, 9,
                             selected ? &small_center_inv : &small_center, profile);
-    }
-
-    draw_separator(canvas, 26);
-
-    if (state->layer_label == NULL || strlen(state->layer_label) == 0) {
-        char text[12] = {};
-        snprintf(text, sizeof(text), "LAYER %u", state->layer_index);
-        lv_canvas_draw_text(canvas, 0, 40, 68, &layer_dsc, text);
-    } else {
-        lv_canvas_draw_text(canvas, 0, 40, 68, &layer_dsc, state->layer_label);
     }
 
     rotate_canvas(canvas, cbuf);
