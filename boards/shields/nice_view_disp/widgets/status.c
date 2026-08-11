@@ -82,25 +82,25 @@ static void draw_top(lv_obj_t *widget, lv_color_t cbuf[], const struct status_st
     lv_canvas_draw_rect(canvas, 0, 0, CANVAS_SIZE, CANVAS_SIZE, &bg_dsc);
 
     /* Left / peripheral battery. */
-    lv_canvas_draw_text(canvas, 1, 7, 8, &small_left, "L");
+    lv_canvas_draw_text(canvas, 1, 4, 8, &small_left, "L");
     if (state->peripheral_battery_available) {
-        draw_battery_level(canvas, 10, 4, state->peripheral_battery, false);
+        draw_battery_level(canvas, 10, 1, state->peripheral_battery, false);
         char left_text[6] = {};
         snprintf(left_text, sizeof(left_text), "%u%%", state->peripheral_battery);
-        lv_canvas_draw_text(canvas, 37, 7, 30, &small_right, left_text);
+        lv_canvas_draw_text(canvas, 37, 4, 30, &small_right, left_text);
     } else {
-        draw_battery_level(canvas, 10, 4, 0, false);
-        lv_canvas_draw_text(canvas, 37, 7, 30, &small_right, "--%");
+        draw_battery_level(canvas, 10, 1, 0, false);
+        lv_canvas_draw_text(canvas, 37, 4, 30, &small_right, "--%");
     }
 
     /* Right / local central battery. */
-    lv_canvas_draw_text(canvas, 1, 34, 8, &small_left, "R");
-    draw_battery_level(canvas, 10, 31, state->local_battery, state->local_charging);
+    lv_canvas_draw_text(canvas, 1, 27, 8, &small_left, "R");
+    draw_battery_level(canvas, 10, 24, state->local_battery, state->local_charging);
     char right_text[6] = {};
     snprintf(right_text, sizeof(right_text), "%u%%", state->local_battery);
-    lv_canvas_draw_text(canvas, 37, 34, 30, &small_right, right_text);
+    lv_canvas_draw_text(canvas, 37, 27, 30, &small_right, right_text);
 
-    draw_separator(canvas, 61);
+    draw_separator(canvas, 51);
     rotate_canvas(canvas, cbuf);
 }
 
@@ -133,27 +133,25 @@ static void draw_middle(lv_obj_t *widget, lv_color_t cbuf[], const struct status
         }
         break;
     }
-    lv_canvas_draw_text(canvas, 2, 3, 22, &icon_dsc, output_text);
+    lv_canvas_draw_text(canvas, 2, 2, 22, &icon_dsc, output_text);
 
     if (state->caps_lock) {
-        lv_canvas_draw_text(canvas, 34, 8, 32, &small_right, "CAPS");
+        lv_canvas_draw_text(canvas, 34, 6, 32, &small_right, "CAPS");
     }
 
-    draw_separator(canvas, 27);
+    draw_separator(canvas, 23);
 
     char wpm_text[12] = {};
     snprintf(wpm_text, sizeof(wpm_text), "WPM %u", state->wpm);
-    lv_canvas_draw_text(canvas, 3, 40, 62, &small_left, wpm_text);
+    lv_canvas_draw_text(canvas, 3, 34, 62, &small_left, wpm_text);
 
-    draw_separator(canvas, 61);
+    draw_separator(canvas, 52);
     rotate_canvas(canvas, cbuf);
 }
 
-/* Final 68 px block. On this rotated nice!view only the first ~24 source
- * pixels of this canvas are visible. The physical photo confirms that smaller
- * source-Y values appear higher on the screen, so Bluetooth profiles are drawn
- * first and the active layer below them. The two 8 px text rows are separated
- * by several source pixels to keep them visually distinct. */
+/* Final 68 px block. The canvas is shifted so that ~32 source pixels are now
+ * visible on the Corne. This gives the Bluetooth row and the active layer their
+ * own breathing room. The layer uses the already-enabled Montserrat 14 font. */
 static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status_state *state) {
     lv_obj_t *canvas = lv_obj_get_child(widget, 2);
 
@@ -168,12 +166,12 @@ static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status
     lv_draw_label_dsc_t small_center_inv;
     init_label_dsc(&small_center_inv, LVGL_BACKGROUND, &lv_font_unscii_8, LV_TEXT_ALIGN_CENTER);
     lv_draw_label_dsc_t layer_dsc;
-    init_label_dsc(&layer_dsc, LVGL_FOREGROUND, &lv_font_unscii_8, LV_TEXT_ALIGN_CENTER);
+    init_label_dsc(&layer_dsc, LVGL_FOREGROUND, &lv_font_montserrat_14, LV_TEXT_ALIGN_CENTER);
 
     lv_canvas_draw_rect(canvas, 0, 0, CANVAS_SIZE, CANVAS_SIZE, &bg_dsc);
 
     /* Bluetooth profiles: upper physical row. */
-    lv_canvas_draw_text(canvas, 1, 2, 18, &small_left, "BT");
+    lv_canvas_draw_text(canvas, 1, 1, 18, &small_left, "BT");
 
     const int profile_x[5] = {22, 31, 40, 49, 58};
     for (int i = 0; i < 5; i++) {
@@ -181,9 +179,9 @@ static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status
         char profile[2] = {};
         snprintf(profile, sizeof(profile), "%d", i + 1);
         if (selected) {
-            lv_canvas_draw_rect(canvas, profile_x[i], 0, 9, 11, &fg_dsc);
+            lv_canvas_draw_rect(canvas, profile_x[i], 0, 9, 10, &fg_dsc);
         }
-        lv_canvas_draw_text(canvas, profile_x[i], 2, 9,
+        lv_canvas_draw_text(canvas, profile_x[i], 1, 9,
                             selected ? &small_center_inv : &small_center, profile);
     }
 
@@ -191,9 +189,9 @@ static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status
     if (state->layer_label == NULL || strlen(state->layer_label) == 0) {
         char text[12] = {};
         snprintf(text, sizeof(text), "LAYER %u", state->layer_index);
-        lv_canvas_draw_text(canvas, 0, 15, 68, &layer_dsc, text);
+        lv_canvas_draw_text(canvas, 0, 14, 68, &layer_dsc, text);
     } else {
-        lv_canvas_draw_text(canvas, 0, 15, 68, &layer_dsc, state->layer_label);
+        lv_canvas_draw_text(canvas, 0, 14, 68, &layer_dsc, state->layer_label);
     }
 
     rotate_canvas(canvas, cbuf);
@@ -369,9 +367,11 @@ int top_pos = 0;
 int middle_pos = 68;
 int bottom_pos = 136;
 #else
-int top_pos = 92;
-int middle_pos = 24;
-int bottom_pos = -44;
+/* Give 8 more physical pixels to the bottom block. The battery block is
+ * compacted accordingly; the middle block keeps its full 68 px width. */
+int top_pos = 100;
+int middle_pos = 32;
+int bottom_pos = -36;
 #endif
 
 int zmk_widget_status_init(struct zmk_widget_status *widget, lv_obj_t *parent) {
