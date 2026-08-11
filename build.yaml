@@ -7,13 +7,20 @@
 #
 ---
 include:
+  # Corne Choc Pro BT: RIGHT half is the ZMK central.
+  # The left half is forced to peripheral even though Keebart defaults it to central.
   - board: corne_choc_pro_left
     snippet: studio-rpc-usb-uart
     shield: nice_view
-    cmake-args: -DCONFIG_ZMK_STUDIO=y
+    cmake-args: -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
+
+  # The display is on the right half, so make it central.
+  # Battery fetching lets the right half receive the left half battery level.
+  # ZMK Studio must run on the central half as well.
   - board: corne_choc_pro_right
     shield: nice_view
     snippet: studio-rpc-usb-uart
+    cmake-args: -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=y -DCONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_FETCHING=y -DCONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY=y -DCONFIG_ZMK_STUDIO=y
 
   - board: corne_choc_pro_left
     shield: settings_reset
