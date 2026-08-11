@@ -139,11 +139,10 @@ static void draw_middle(lv_obj_t *widget, lv_color_t cbuf[], const struct status
     /* Connection icon occupies the left half and is vertically centred. */
     lv_canvas_draw_text(canvas, 3, 10, 22, &icon_dsc, output_text);
 
-    /* WPM and Caps share the right half. This removes the old dedicated WPM row. */
-    lv_canvas_draw_text(canvas, 27, 3, 24, &small_left, "WPM");
-    char wpm_value[5] = {};
-    snprintf(wpm_value, sizeof(wpm_value), "%u", state->wpm);
-    lv_canvas_draw_text(canvas, 50, 3, 17, &small_right, wpm_value);
+    /* W/M and value are rendered as one string so a three-digit value stays together. */
+    char wpm_text[10] = {};
+    snprintf(wpm_text, sizeof(wpm_text), "W/M %u", state->wpm);
+    lv_canvas_draw_text(canvas, 27, 3, 40, &small_left, wpm_text);
 
     if (state->caps_lock) {
         lv_canvas_draw_text(canvas, 34, 24, 33, &small_right, "CAPS");
@@ -190,13 +189,20 @@ static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status
                             selected ? &small_center_inv : &small_center, profile);
     }
 
-    /* Layer gets a dedicated lower row and the same compact font as V6. */
+    /* Layer gets a dedicated lower row in UNSCII 8 and is always shown uppercase. */
     if (state->layer_label == NULL || strlen(state->layer_label) == 0) {
-        char text[12] = {};
-        snprintf(text, sizeof(text), "LAYER %u", state->layer_index);
-        lv_canvas_draw_text(canvas, 0, 30, 68, &layer_dsc, text);
+        char layer_text[12] = {};
+        snprintf(layer_text, sizeof(layer_text), "LAYER %u", state->layer_index);
+        lv_canvas_draw_text(canvas, 0, 30, 68, &layer_dsc, layer_text);
     } else {
-        lv_canvas_draw_text(canvas, 0, 30, 68, &layer_dsc, state->layer_label);
+        char layer_text[32] = {};
+        size_t i = 0;
+        for (; i < sizeof(layer_text) - 1 && state->layer_label[i] != '\0'; i++) {
+            char c = state->layer_label[i];
+            layer_text[i] = (c >= 'a' && c <= 'z') ? (char)(c - 'a' + 'A') : c;
+        }
+        layer_text[i] = '\0';
+        lv_canvas_draw_text(canvas, 0, 30, 68, &layer_dsc, layer_text);
     }
 
     rotate_canvas(canvas, cbuf);
