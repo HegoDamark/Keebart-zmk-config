@@ -29,17 +29,44 @@ void rotate_canvas(lv_obj_t *canvas, lv_color_t cbuf[]) {
 #endif
 }
 
-void draw_battery(lv_obj_t *canvas, const struct status_state *state) {
-    lv_draw_rect_dsc_t rect_black_dsc;
-    init_rect_dsc(&rect_black_dsc, LVGL_BACKGROUND);
-    lv_draw_rect_dsc_t rect_white_dsc;
-    init_rect_dsc(&rect_white_dsc, LVGL_FOREGROUND);
+/* Compact 24x12 battery icon used by both split halves. */
+void draw_battery_level(lv_obj_t *canvas, int x, int y, uint8_t level, bool charging) {
+    lv_draw_rect_dsc_t bg_dsc;
+    init_rect_dsc(&bg_dsc, LVGL_BACKGROUND);
+    lv_draw_rect_dsc_t fg_dsc;
+    init_rect_dsc(&fg_dsc, LVGL_FOREGROUND);
 
-    lv_canvas_draw_rect(canvas, 0, 2, 29, 12, &rect_white_dsc);
-    lv_canvas_draw_rect(canvas, 1, 3, 27, 10, &rect_black_dsc);
-    lv_canvas_draw_rect(canvas, 2, 4, (state->battery + 2) / 4, 8, &rect_white_dsc);
-    lv_canvas_draw_rect(canvas, 30, 5, 3, 6, &rect_white_dsc);
-    lv_canvas_draw_rect(canvas, 31, 6, 1, 4, &rect_black_dsc);
+    uint8_t clamped = level > 100 ? 100 : level;
+    uint8_t fill_width = (clamped * 18 + 99) / 100;
+
+    /* Body, inner cutout, charge fill and positive terminal. */
+    lv_canvas_draw_rect(canvas, x, y, 22, 12, &fg_dsc);
+    lv_canvas_draw_rect(canvas, x + 1, y + 1, 20, 10, &bg_dsc);
+    if (fill_width > 0) {
+        lv_canvas_draw_rect(canvas, x + 2, y + 2, fill_width, 8, &fg_dsc);
+    }
+    lv_canvas_draw_rect(canvas, x + 22, y + 3, 2, 6, &fg_dsc);
+
+    if (charging) {
+        lv_draw_img_dsc_t img_dsc;
+        lv_draw_img_dsc_init(&img_dsc);
+        /* Re-use the stock nice!view lightning bolt asset. */
+        lv_canvas_draw_img(canvas, x + 6, y - 1, &bolt, &img_dsc);
+    }
+}
+
+/* Keep the original helper for the peripheral status screen. */
+void draw_battery(lv_obj_t *canvas, const struct status_state *state) {
+    lv_draw_rect_dsc_t bg_dsc;
+    init_rect_dsc(&bg_dsc, LVGL_BACKGROUND);
+    lv_draw_rect_dsc_t fg_dsc;
+    init_rect_dsc(&fg_dsc, LVGL_FOREGROUND);
+
+    lv_canvas_draw_rect(canvas, 0, 2, 29, 12, &fg_dsc);
+    lv_canvas_draw_rect(canvas, 1, 3, 27, 10, &bg_dsc);
+    lv_canvas_draw_rect(canvas, 2, 4, (state->battery + 2) / 4, 8, &fg_dsc);
+    lv_canvas_draw_rect(canvas, 30, 5, 3, 6, &fg_dsc);
+    lv_canvas_draw_rect(canvas, 31, 6, 1, 4, &bg_dsc);
 
     if (state->charging) {
         lv_draw_img_dsc_t img_dsc;
