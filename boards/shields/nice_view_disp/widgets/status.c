@@ -150,10 +150,10 @@ static void draw_middle(lv_obj_t *widget, lv_color_t cbuf[], const struct status
 }
 
 /* Final 68 px block. On this rotated nice!view only the first ~24 source
- * pixels of this canvas are visible, so Bluetooth profiles and layer must both
- * live in that compact strip. After rotation, larger source-Y values appear
- * above smaller source-Y values: profiles are therefore drawn at y=14 and the
- * active layer at y=2 so the physical display reads BT row, then layer. */
+ * pixels of this canvas are visible. The physical photo confirms that smaller
+ * source-Y values appear higher on the screen, so Bluetooth profiles are drawn
+ * first and the active layer below them. The two 8 px text rows are separated
+ * by several source pixels to keep them visually distinct. */
 static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status_state *state) {
     lv_obj_t *canvas = lv_obj_get_child(widget, 2);
 
@@ -172,17 +172,8 @@ static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status
 
     lv_canvas_draw_rect(canvas, 0, 0, CANVAS_SIZE, CANVAS_SIZE, &bg_dsc);
 
-    /* The active layer is the lower physical row after the 90 degree rotation. */
-    if (state->layer_label == NULL || strlen(state->layer_label) == 0) {
-        char text[12] = {};
-        snprintf(text, sizeof(text), "LAYER %u", state->layer_index);
-        lv_canvas_draw_text(canvas, 0, 2, 68, &layer_dsc, text);
-    } else {
-        lv_canvas_draw_text(canvas, 0, 2, 68, &layer_dsc, state->layer_label);
-    }
-
-    /* Bluetooth profiles occupy the row immediately above the layer. */
-    lv_canvas_draw_text(canvas, 1, 14, 18, &small_left, "BT");
+    /* Bluetooth profiles: upper physical row. */
+    lv_canvas_draw_text(canvas, 1, 2, 18, &small_left, "BT");
 
     const int profile_x[5] = {22, 31, 40, 49, 58};
     for (int i = 0; i < 5; i++) {
@@ -190,10 +181,19 @@ static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status
         char profile[2] = {};
         snprintf(profile, sizeof(profile), "%d", i + 1);
         if (selected) {
-            lv_canvas_draw_rect(canvas, profile_x[i], 11, 9, 12, &fg_dsc);
+            lv_canvas_draw_rect(canvas, profile_x[i], 0, 9, 11, &fg_dsc);
         }
-        lv_canvas_draw_text(canvas, profile_x[i], 14, 9,
+        lv_canvas_draw_text(canvas, profile_x[i], 2, 9,
                             selected ? &small_center_inv : &small_center, profile);
+    }
+
+    /* Active layer: lower physical row with a clear gap below the BT row. */
+    if (state->layer_label == NULL || strlen(state->layer_label) == 0) {
+        char text[12] = {};
+        snprintf(text, sizeof(text), "LAYER %u", state->layer_index);
+        lv_canvas_draw_text(canvas, 0, 15, 68, &layer_dsc, text);
+    } else {
+        lv_canvas_draw_text(canvas, 0, 15, 68, &layer_dsc, state->layer_label);
     }
 
     rotate_canvas(canvas, cbuf);
